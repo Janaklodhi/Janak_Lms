@@ -1,7 +1,5 @@
 from django.shortcuts import render
-
 # Create your views here.
-
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions
@@ -12,13 +10,14 @@ from .serializers import UserSerializer, RegisterSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-
+import pdb
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
 
 class ListData(APIView):
+    #  pdb.set_trace() 
      authentication_classes = [JWTAuthentication] 
      permission_classes = [permissions.IsAdminUser]
      def get(self,request):
@@ -53,17 +52,8 @@ class LogoutView(APIView):
                  return Response({"messages":  "Logout successfully"}, status = 200)
             except Exception:
                  return Response({"errro": "invalid credentials"}, status = 400)
-
-
-
-# THIS IS FOR WITHOUT SERILZER
-# class ListData(APIView):
-#     def get(self, request):
-#         users = User.objects.all().values("id", "username", "email", "first_name", "last_name")
-#         return Response({"data": list(users)}, status=200)
-
-
-# this is my secure api writ
+            
+            
 class Home(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
