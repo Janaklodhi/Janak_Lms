@@ -33,10 +33,7 @@ if not SECRET_KEY:
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
-# Application definition
-
+AUTH_USER_MODEL = 'accounts.CustomUser'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,9 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
+    'rest_framework_simplejwt.'
+    'token_blacklist',
     'corsheaders',
     'accounts',
+    'courses'
 ]
 
 
@@ -58,7 +57,6 @@ REST_FRAMEWORK = {
     ),
 
 }
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
@@ -76,7 +74,8 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.con'
+    'trib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -115,15 +114,16 @@ WSGI_APPLICATION = 'lms.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'lms_db',  # Name of the database you created in phpMyAdmin
+        'NAME': 'lms',  # Name of the database you created in phpMyAdmin
         'USER': 'root',  # Default username for XAMPP MySQL
         'PASSWORD': '',  # Default password for XAMPP MySQL (usually empty)
         'HOST': 'localhost',  # Use 'localhost' when using XAMPP
         'PORT': '3306',  # Default MySQL port
+         'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -160,8 +160,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

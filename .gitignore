@@ -1,0 +1,21 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.venv/
+.env
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+.DS_Store
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
