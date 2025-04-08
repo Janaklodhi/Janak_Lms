@@ -1,7 +1,6 @@
-from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,26 +10,39 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 import pdb
+from rest_framework import viewsets
+from accounts.models import CustomUser  # 👈 import your model
+# # yadi merr ko automatically crud chahiye toh mme viewsets use karna padega or yadi manully crud chahiye toh mujhe  APIView UserSerializer
+# karna padega
+
+
+# this is make avaiable all the api endpoint for all the crud 
+class UserViewset(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+
+
+# this is also fine
 class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()  # 👈 use CustomUser instead of User
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
 
 class ListData(APIView):
-    #  pdb.set_trace() 
      authentication_classes = [JWTAuthentication] 
      permission_classes = [permissions.IsAdminUser]
      def get(self,request):
-          users = User.objects.all()
+          users = CustomUser.objects.all()
           serializer = UserSerializer(users, many=True) 
           return Response({"data": serializer.data}, status=200)
-     
+
+# fine 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
     def post(self, request):
-        username = request.data.get('username')
+        email = request.data.get('email')
         password  = request.data.get('password')
-        user = User.objects.filter(username=username).first()
+        user = CustomUser.objects.filter(email=email).first()
 
         if user and user.check_password(password):
             refresh = RefreshToken.for_user(user)
@@ -40,27 +52,19 @@ class LoginView(APIView):
             }, status=200)
         return Response({"error": "Invalid credentials"}, status=400)
     
-    
+
+
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
             try:
                  refresh_token = request.data.get("refresh_token")
-                 print(refresh_token)
                  token = RefreshToken(refresh_token)
                  token.blacklist()
                  return Response({"messages":  "Logout successfully"}, status = 200)
             except Exception:
                  return Response({"errro": "invalid credentials"}, status = 400)
-            
-            
-class Home(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        content = {'message': 'Hello, World!'}
-        return Response(content)
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
@@ -68,7 +72,7 @@ class LogoutView(APIView):
     def post(self, request):
         try:
             refresh_token = request.data.get("refresh_token")  # Extract from request body
-            print(refresh_token)
+            # print(refresh_token)
             if not refresh_token:
                 return Response({"error": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)
 
